@@ -3,9 +3,7 @@
 // ein kommentar :D
 
 import javax.swing.*;
-// ein weiteres kommentar :D
-// testing  GitHub
-// testing merge
+
 public class AllThoseTerritories {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
