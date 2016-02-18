@@ -3,7 +3,7 @@
 // ein kommentar :D
 
 import javax.swing.*;
-
+// ein weiteres kommentar :D
 // testing  GitHub
 public class AllThoseTerritories {
     public static void main(String[] args) {
