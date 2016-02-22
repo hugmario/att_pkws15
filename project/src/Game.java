@@ -24,60 +24,78 @@ public class Game extends JPanel{
 
     }
 
+    public void mouseEvent(){}
+
+    // checks if the clicked territory is free, if yes occupies it
+    // moves the game to the next phase if all territories are occupied.
+    private void occupyTerritories(){}
+
+    private void placeReinforcements(){}
+
+    private int calculateReinforcements(){return 0;}
+
+    private void attackTerritories(){}
+
+    private void mooveTroops(){}
+
+    public Territory getRandomTerritory(){}
+
+    public int gameOver(){return 0;}
+
     public void RunGame(){
 
         // 1.Phase Landerwerb
-        // Spieler / PC wählen abwechselnd
+        // Spieler / PC wï¿½hlen abwechselnd
         // - wechsel auf Spieler
         // - Spieler klickt auf ein Territorium
         //   - noch nicht besetzt? -> Spieler besetzt es
-        //   - schon besetzt? -> passiert nichts, Spieler muss neu wählen
+        //   - schon besetzt? -> passiert nichts, Spieler muss neu wï¿½hlen
         // - wechsel auf PC
-        // - PC sucht nächstmögliches Territorium (nach Regel: benachbarte Territorium zu besetzen)
+        // - PC sucht nï¿½chstmï¿½gliches Territorium (nach Regel: benachbarte Territorium zu besetzen)
         //   - noch nicht besetzt? -> PC besetzt es
-        //   - schon besetzt? -> passiert nichts, PC sucht nächstes Territorium
-        // - prüfen, ob es noch offene Territorien gibt - falls ja, dann wiederholen, sonst Phase 2
+        //   - schon besetzt? -> passiert nichts, PC sucht nï¿½chstes Territorium
+        // - prï¿½fen, ob es noch offene Territorien gibt - falls ja, dann wiederholen, sonst Phase 2
 
         // 2.Phase Eroberungen
-        // VERTEILEN DER VERSTÄRKUNGEN
+        // VERTEILEN DER VERSTï¿½RKUNGEN
         // Spieler ist an der Reihe
-        // - zählen, wieviele Territorien der Spieler besitzt (pro 3 Territorien, 1 Armee + Bonusarmeen der Kontinente)
+        // - zï¿½hlen, wieviele Territorien der Spieler besitzt (pro 3 Territorien, 1 Armee + Bonusarmeen der Kontinente)
         // - Spieler setzt die Armeen in Territorien
-        //   - prüfen, ob dieses Territorium den Spieler gehört
+        //   - prï¿½fen, ob dieses Territorium den Spieler gehï¿½rt
         //     - ja, dann nach Anzahl fragen, wieviele gesetzt werden sollen (von maximal erlaubten)
         //     - nein -> neu klicken
         // - hat der Spieler noch Armeen zum platzieren? - wenn ja, dann wiederholen, wenn nein
         // PC ist an der Reihe
-        // - zählen, wieviele Territorien der Spieler besitzt (pro 3 Territorien, 1 Armee + Bonusarmeen der Kontinente)
+        // - zï¿½hlen, wieviele Territorien der Spieler besitzt (pro 3 Territorien, 1 Armee + Bonusarmeen der Kontinente)
         // - PC setzt Armeen in Territoren (zuerst passendes suchen)
-        //   - PC setzt Höhe an Armeen an durchschnittlicher Armeenzahl benachbarter feindlicher Territorien
+        //   - PC setzt Hï¿½he an Armeen an durchschnittlicher Armeenzahl benachbarter feindlicher Territorien
         // - wiederholen, falls noch nicht alle Armeen platziert wurden
 
         // 2.Phase
         // ANGRIFF
         // Spieler ist an der Reihe
         // - Spieler klickt in ein eigenes Territorium
-        //   - prüfen ob es seines ist, und mindestens 2 Armeen vorhanden sind (da 1 im Territorium bleiben muss)
+        //   - prï¿½fen ob es seines ist, und mindestens 2 Armeen vorhanden sind (da 1 im Territorium bleiben muss)
         //   - wenn nicht, neu klicken lassen
-        // - gültiges Territorium: Spieler klickt auf benachbartes feindliches Territorium
-        //   - prüfen ob es ein feindliches ist
+        // - gï¿½ltiges Territorium: Spieler klickt auf benachbartes feindliches Territorium
+        //   - prï¿½fen ob es ein feindliches ist
         //   - wenn nicht, neu klicken lassen
-        // - Angriff mit max. 3 Armeen (wird immer höchstmögliche Anzahl ausgewählt)
+        // - Angriff mit max. 3 Armeen (wird immer hï¿½chstmï¿½gliche Anzahl ausgewï¿½hlt)
         //
         // - Spieler schickt Armee #1 rein - Angreifendes Territorium verteidigt sich mit Armee #1
-        // - beide Seiten würfeln:
-        // - Spieler hat höhere Augenzahl als PC?
-        //   - Spieler Armee überlebt, PC Armee wird vernichtet
-        //   - sonst PC Armee überlebt, Spieler Armee wird vernichtet
-        // - war es die letzte Armee des PC Territoriums (Spieler hat das PCTerritorium übernommen)?
-        //   - ja, Territoriumsbesitz auf Spieler umschreiben und überlebte Armeen eintragen
-        //     - erlaube Armeen vom eigenen angreifenden Territorium ins übernommene Territorium nachziehen zu lassen
-        //         (wenigstens 1 Armee muss im angreifenden Territorium zurückbleiben)
-        // - nein, war es die letzte Armee des Spieler Territoriums (PC hat Spielerterritorium übernommen)?
-        //   - ja, Territoriumsbesitz auf PC umschreiben und überlebte Armeen eintragen
-        //   - nein, gibt es noch nächste Armeen? (bis zu 2 weitere)
-        //     - ja, dann nächste Armeen antreten lassen
-        //     - nein, keine Territoriumsänderung (laut Aufgabenstellung soll das aber niemals eintreten...) [DISCUSS]
+        // - beide Seiten wï¿½rfeln:
+        // - Spieler hat hï¿½here Augenzahl als PC?
+        //   - Spieler Armee ï¿½berlebt, PC Armee wird vernichtet
+        //   - sonst PC Armee ï¿½berlebt, Spieler Armee wird vernichtet
+        // - war es die letzte Armee des PC Territoriums (Spieler hat das PCTerritorium ï¿½bernommen)?
+        //   - ja, Territoriumsbesitz auf Spieler umschreiben und ï¿½berlebte Armeen eintragen
+        //     - erlaube Armeen vom eigenen angreifenden Territorium ins ï¿½bernommene Territorium nachziehen zu lassen
+        //         (wenigstens 1 Armee muss im angreifenden Territorium zurï¿½ckbleiben)
+        // - nein, war es die letzte Armee des Spieler Territoriums (PC hat Spielerterritorium ï¿½bernommen)?
+        //   - ja, Territoriumsbesitz auf PC umschreiben und ï¿½berlebte Armeen eintragen
+        //   - nein, gibt es noch nï¿½chste Armeen? (bis zu 2 weitere)
+        //     - ja, dann nï¿½chste Armeen antreten lassen
+        //     - nein, keine Territoriumsï¿½nderung (laut Aufgabenstellung soll das aber niemals eintreten...) [DISCUSS]
         //
 
 
@@ -88,12 +106,12 @@ public class Game extends JPanel{
         // Spieler klickt auf ein benachtbartes eigene Territorium
         // - nicht seines?, neu klicken
         // pro Linksklick aufs Zielterritorium wird 1 Armee verschoben
-        // pro Rechtsklick aufs Zielterritorium wird 1 Armee wieder zurückverschoben
+        // pro Rechtsklick aufs Zielterritorium wird 1 Armee wieder zurï¿½ckverschoben
 
 
         // 3.Phase
         // RUNDENABSCHLUSS
-        // wenn der Spieler mit dem Verschieben fertig ist, dann die Runde beenden und nächster ist an der Reihe (PC)
+        // wenn der Spieler mit dem Verschieben fertig ist, dann die Runde beenden und nï¿½chster ist an der Reihe (PC)
 
     }
 
