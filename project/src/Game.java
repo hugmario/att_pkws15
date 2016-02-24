@@ -1,22 +1,19 @@
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
-public class Game extends JPanel{
+
+public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
     private String worldfile = "";
     private Player[] players = new Player[2];
-    private World map;
+    private WorldLoader map;
 
     public Game(String worldfile){
         this.worldfile = worldfile;
 
-        // Eigenschaften des Fensters
-        this.setSize(1250,650);
-        // this.setResizeable(false);
-        // this.setTitle("All those Territories");
-
         // Mapfile einlesen und Territorien generieren
-        map = new World(worldfile);
+        map = new WorldLoader(worldfile);
 
         // Spieler erstellen
         players[0] = new Player("Mario", Color.green);
@@ -41,7 +38,7 @@ public class Game extends JPanel{
         // 2.Phase Eroberungen
         // VERTEILEN DER VERSTÄRKUNGEN
         // Spieler ist an der Reihe
-        // - zählen, wieviele Territorien der Spieler besitzt (pro 3 Territorien, 1 Armee + Bonusarmeen der Kontinente)
+        // - mitzählen, wieviele Territorien der Spieler besitzt (pro 3 Territorien, 1 Armee + Bonusarmeen der Kontinente)
         // - Spieler setzt die Armeen in Territorien
         //   - prüfen, ob dieses Territorium den Spieler gehört
         //     - ja, dann nach Anzahl fragen, wieviele gesetzt werden sollen (von maximal erlaubten)
@@ -95,6 +92,43 @@ public class Game extends JPanel{
         // RUNDENABSCHLUSS
         // wenn der Spieler mit dem Verschieben fertig ist, dann die Runde beenden und nächster ist an der Reihe (PC)
 
+        // Prüfen ob Spielende
+        //
+
     }
 
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent mouseEvent) {
+
+    }
 }

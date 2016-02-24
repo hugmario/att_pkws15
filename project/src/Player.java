@@ -4,6 +4,7 @@ public class Player {
 
     private String playername;
     private Color playercolor;
+    private int ownedterritories;
 
     public Player(String name, Color color){
         playername = name;

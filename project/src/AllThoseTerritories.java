@@ -3,6 +3,7 @@
 // ein kommentar :D
 
 import javax.swing.*;
+import java.util.regex.Pattern;
 
 public class AllThoseTerritories {
     public static void main(String[] args) {
@@ -11,7 +12,7 @@ public class AllThoseTerritories {
                 if (args.length == 0) {
                     //System.out.println("usage: AllThoseTerritories Worldfile.map");
                     //TESTING:
-                    Game g = new Game("maps/world.map");
+                    Game g = new Game("maps/three-continents.map");
                 } else {
                     Game g = new Game(args[0]);
                     g.setVisible(true);
