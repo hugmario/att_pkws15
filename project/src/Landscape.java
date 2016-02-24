@@ -1,11 +1,10 @@
 
-import java.awt.Point;
-import java.awt.Polygon;
+import java.awt.*;
 
 
 public class Landscape {
     private Polygon p;
-
+    private Color c;
 
     public Landscape(){
         p = new Polygon();
@@ -13,12 +12,25 @@ public class Landscape {
 
     public Landscape(Polygon p){
         this.p = p;
+        this.c = Color.DARK_GRAY;
     }
 
-    public void addPointToLandscape(int x, int y){
+    public void addPointToLandscape(int x, int y)
+    {
         p.addPoint(x, y);
     }
 
+    public void setColorToDraw(Color c){
+        this.c = c;
+    }
+
+    public Color getColor(){
+        return c;
+    }
+
+    public Polygon getPolygon(){
+        return p;
+    }
 
     /*protected void paint(Graphics g){
 

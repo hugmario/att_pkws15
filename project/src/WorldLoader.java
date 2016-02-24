@@ -9,15 +9,9 @@ import java.util.regex.Pattern;
 
 public class WorldLoader extends JPanel {
 
-    //private HashMap<String, Continent> contients; // "Continentname", Continent with Territories
-    //private HashMap<String, Territory> territory;
 
     private HashMap<String, Continent> continentHashMap = new HashMap<String, Continent>();
     private HashMap<String, Territory> territoryHashMap = new HashMap<String, Territory>();
-
-    //private LinkedList<Landscape> landscapesLinkedList = new LinkedList<Landscape>();
-
-
 
 
     public WorldLoader (String worldfile){
@@ -117,9 +111,10 @@ public class WorldLoader extends JPanel {
                     }
                 }else{
                     // leere Zeile
+
                 }
             }
-            //System.out.println("DEBUG message");
+            System.out.println("DEBUG WorldLoader: " + continentHashMap.size() + " Continents with " + territoryHashMap.size() + " Territories total.");
 
 
         }catch (IOException ex){
@@ -128,6 +123,13 @@ public class WorldLoader extends JPanel {
 
     }
 
+    public HashMap<String, Continent> getContinentHashMap(){
+        return continentHashMap;
+    }
+
+    public HashMap<String, Territory> getTerritoryHashMap(){
+        return territoryHashMap;
+    }
 
     public String getAffectedRegion(String line) {
         // Prüfe auf Wörter mit Leerzeichen (zuerst das patch-of usw. wegschneiden, dann klappts)

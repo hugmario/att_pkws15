@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Game extends JPanel implements MouseListener, MouseMotionListener{
@@ -8,6 +10,10 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
     private String worldfile = "";
     private Player[] players = new Player[2];
     private WorldLoader map;
+    private Point mouseClicked;
+    private boolean initdraw = true;
+    private int phase = 0; // 0, alles generieren; 1, Starte mit Landerwerb; 2, Angriff; 3, Armeen verschieben
+    private int PlayerOnTurn = 0; // 0, gar keiner; 1, .. usw.
 
     public Game(String worldfile){
         this.worldfile = worldfile;
@@ -15,12 +21,50 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
         // Mapfile einlesen und Territorien generieren
         map = new WorldLoader(worldfile);
 
-        // Zeichnen der Mapfile
-
         // Spieler erstellen
         players[0] = new Player("Mario", Color.green);
         players[1] = new Player("Daniel", Color.blue);
 
+        // Mausevents erstellen
+        addMouseListener(this);
+        addMouseMotionListener(this);
+
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        //System.out.println("DEBUG Game: Draw firsttime map");
+        HashMap<String, Continent> continentsDraw = new HashMap<String, Continent>();
+        HashMap<String, Territory> territoriesDraw = new HashMap<String, Territory>();
+        HashMap<Integer, Landscape> landscapesDraw = new HashMap<Integer, Landscape>();
+
+        continentsDraw = map.getContinentHashMap();
+        territoriesDraw = map.getTerritoryHashMap();
+        //System.out.println("DEBUG Game: before first loop");
+        for (Map.Entry<String, Territory> entry : territoriesDraw.entrySet()) {
+            String key = entry.getKey();
+            Territory ter = entry.getValue();
+            landscapesDraw = ter.getLandscapes();
+
+            // Zeichne Landscapes
+            for (Map.Entry<Integer, Landscape> entryl : landscapesDraw.entrySet()) {
+                Integer keyl = entryl.getKey();
+                Landscape landsc = entryl.getValue();
+
+                Polygon p = landsc.getPolygon();
+                g.setColor(landsc.getColor());
+                g.drawPolygon(p);
+            }
+
+            // Zeichne Hauptstädte mit Armeenzahl
+            g.setColor(Color.black);
+            g.drawString(ter.getTerritoryArmy().toString(), (int)ter.getTerritoryCapital().getX(), (int)ter.getTerritoryCapital().getY());
+        }
+
+       /* g.setColor(Color.blue);
+        g.fillRect(5, 5, 50, 50);*/
     }
 
     public void mouseEvent(){}
@@ -37,7 +81,9 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
     private void mooveTroops(){}
 
-    public Territory getRandomTerritory(){}
+    /*public Territory getRandomTerritory(){
+        return ;
+    }*/
 
     public int gameOver(){return 0;}
 
@@ -58,11 +104,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
         // 2.Phase Eroberungen
         // VERTEILEN DER VERSTï¿½RKUNGEN
         // Spieler ist an der Reihe
-<<<<<<< HEAD
         // - mitzählen, wieviele Territorien der Spieler besitzt (pro 3 Territorien, 1 Armee + Bonusarmeen der Kontinente)
-=======
-        // - zï¿½hlen, wieviele Territorien der Spieler besitzt (pro 3 Territorien, 1 Armee + Bonusarmeen der Kontinente)
->>>>>>> b6bebd3b422e1ffc58ff3ab122b7f6c6fa4edf5f
         // - Spieler setzt die Armeen in Territorien
         //   - prï¿½fen, ob dieses Territorium den Spieler gehï¿½rt
         //     - ja, dann nach Anzahl fragen, wieviele gesetzt werden sollen (von maximal erlaubten)
@@ -123,6 +165,8 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+        mouseClicked = mouseEvent.getPoint(); // wo wurde mit der Maus geklickt?
+        System.out.println("DEBUG Game-mouseClicked: " + mouseClicked.getX() + ", "+ mouseClicked.getY());
 
     }
 
