@@ -4,7 +4,7 @@ public class Player {
 
     private String playername;
     private Color playercolor;
-    private int ownedterritories;
+    private int numberOwnedTerritories;
     private int reinforcement;
 
     public Player(String name, Color color) {
@@ -20,6 +20,8 @@ public class Player {
     public Color getPlayerColor() {
         return playercolor;
     }
+
+    public Integer getNumberOwnedTerritories(){return numberOwnedTerritories; }
 
     public boolean hasReinforcement() {
         return reinforcement > 0;

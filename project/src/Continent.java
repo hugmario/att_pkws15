@@ -26,7 +26,7 @@ public class Continent extends Territory{
     }
 
     public void addTerritoryToContinent(Territory t){
-        territoryHashMap.put(t.getTerritoryname(), t);
+        territoryHashMap.put(t.getTerritoryName(), t);
     }
 
     public void setContinentArmyBonus(int bonus){

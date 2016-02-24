@@ -12,7 +12,7 @@ public class Landscape {
 
     public Landscape(Polygon p){
         this.p = p;
-        this.c = Color.DARK_GRAY;
+        this.c = Color.LIGHT_GRAY;
     }
 
     public void addPointToLandscape(int x, int y)

@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Territory extends Landscape{
 
@@ -18,7 +19,7 @@ public class Territory extends Landscape{
         territoryname = name;
         ownedby = "NONE";
         counterLandscape = 0;
-        fillcolor = Color.DARK_GRAY;
+        fillcolor = Color.LIGHT_GRAY;
     }
 
     public Territory() {
@@ -28,8 +29,21 @@ public class Territory extends Landscape{
         fillcolor = Color.DARK_GRAY;
     }
 
-    public String getTerritoryname(){
+    public String getTerritoryName(){
         return territoryname;
+    }
+
+    public void setTerritoryOwner(String player){
+        ownedby = player;
+    }
+
+    public String getTerritoryOwner(){
+        return ownedby;
+    }
+
+    public void setTerritoryColor(Color c){
+        fillcolor = c;
+        setNewColorToLandscapes();
     }
 
     public Color getTerritoryColor(){
@@ -39,7 +53,15 @@ public class Territory extends Landscape{
     public Integer getTerritoryArmy(){
         return armycount;
     }
-    
+
+    public void setNewColorToLandscapes(){
+        for (Map.Entry<Integer, Landscape> entry : territoryLandscapes.entrySet()) {
+            Integer keyl = entry.getKey();
+            Landscape landsc = entry.getValue();
+            landsc.setColorToDraw(fillcolor);
+        }
+    }
+
     public void addLandscapeToTerritory(Landscape ls)
     {
         territoryLandscapes.put(counterLandscape, ls);

@@ -8,18 +8,29 @@ import java.util.Map;
 public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
     private String worldfile = "";
+    private String systemmessage = "initializing";
     private Player[] players = new Player[2];
     private WorldLoader map;
-    private Point mouseClicked;
-    private boolean initdraw = true;
+    private Point mouseClickedPoint;
+    private boolean gameover = false;
     private int phase = 0; // 0, alles generieren; 1, Starte mit Landerwerb; 2, Angriff; 3, Armeen verschieben
-    private int PlayerOnTurn = 0; // 0, gar keiner; 1, .. usw.
+    private int playerOnTurn = -1; // Index: -1, gar keiner; 0, .. usw.
+    private int capitalClickOffset = 15;
+
+    HashMap<String, Continent> continentsDraw = new HashMap<String, Continent>();
+    HashMap<String, Territory> territoriesDraw = new HashMap<String, Territory>();
+    HashMap<Integer, Landscape> landscapesDraw = new HashMap<Integer, Landscape>();
+
+
 
     public Game(String worldfile){
         this.worldfile = worldfile;
 
         // Mapfile einlesen und Territorien generieren
         map = new WorldLoader(worldfile);
+
+        continentsDraw = map.getContinentHashMap();
+        territoriesDraw = map.getTerritoryHashMap();
 
         // Spieler erstellen
         players[0] = new Player("Mario", Color.green);
@@ -29,26 +40,26 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
         addMouseListener(this);
         addMouseMotionListener(this);
 
+        // Spiel starten
+        phase = 1;
+        playerOnTurn = 0;
+        systemmessage = "Player: " + players[playerOnTurn].getPlayername() + " - occupie an territory (by clicking on a capital).";
+
+
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        //System.out.println("DEBUG Game: Draw firsttime map");
-        HashMap<String, Continent> continentsDraw = new HashMap<String, Continent>();
-        HashMap<String, Territory> territoriesDraw = new HashMap<String, Territory>();
-        HashMap<Integer, Landscape> landscapesDraw = new HashMap<Integer, Landscape>();
 
-        continentsDraw = map.getContinentHashMap();
-        territoriesDraw = map.getTerritoryHashMap();
-        //System.out.println("DEBUG Game: before first loop");
+
         for (Map.Entry<String, Territory> entry : territoriesDraw.entrySet()) {
             String key = entry.getKey();
             Territory ter = entry.getValue();
             landscapesDraw = ter.getLandscapes();
 
-            // Zeichne Landscapes
+            // Zeichne Landscapes eines Territoriums
             for (Map.Entry<Integer, Landscape> entryl : landscapesDraw.entrySet()) {
                 Integer keyl = entryl.getKey();
                 Landscape landsc = entryl.getValue();
@@ -56,12 +67,17 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                 Polygon p = landsc.getPolygon();
                 g.setColor(landsc.getColor());
                 g.drawPolygon(p);
+                g.fillPolygon(p);
             }
 
             // Zeichne Hauptstädte mit Armeenzahl
             g.setColor(Color.black);
             g.drawString(ter.getTerritoryArmy().toString(), (int)ter.getTerritoryCapital().getX(), (int)ter.getTerritoryCapital().getY());
         }
+
+        // Systemmeldung ausgeben
+        g.setColor(Color.black);
+        g.drawString(systemmessage, 20, 600);
 
        /* g.setColor(Color.blue);
         g.fillRect(5, 5, 50, 50);*/
@@ -84,8 +100,6 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
     /*public Territory getRandomTerritory(){
         return ;
     }*/
-
-    public int gameOver(){return 0;}
 
     public void RunGame(){
 
@@ -158,16 +172,69 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
         // RUNDENABSCHLUSS
         // wenn der Spieler mit dem Verschieben fertig ist, dann die Runde beenden und nï¿½chster ist an der Reihe (PC)
 
-        // Prüfen ob Spielende
-        //
-
     }
+
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
-        mouseClicked = mouseEvent.getPoint(); // wo wurde mit der Maus geklickt?
-        System.out.println("DEBUG Game-mouseClicked: " + mouseClicked.getX() + ", "+ mouseClicked.getY());
+        mouseClickedPoint = mouseEvent.getPoint(); // wo wurde mit der Maus geklickt?
+        System.out.println("DEBUG Game-mouseClicked: " + mouseClickedPoint.getX() + ", " + mouseClickedPoint.getY());
 
+
+        switch (phase){
+            case 1:
+                // Suche nach gültigen Klick
+                for (Map.Entry<String, Territory> entry : territoriesDraw.entrySet()) {
+                    String key = entry.getKey();
+                    Territory ter = entry.getValue();
+                    if (mouseClickedPoint.getX() >= ter.getTerritoryCapital().getX()-capitalClickOffset && mouseClickedPoint.getX() <= ter.getTerritoryCapital().getX()+capitalClickOffset&&
+                    mouseClickedPoint.getY() >= ter.getTerritoryCapital().getY()-capitalClickOffset && mouseClickedPoint.getY() <= ter.getTerritoryCapital().getY()+capitalClickOffset){
+                        //if (ter.getTerritoryOwner().equals("NONE")){ // nur, wenn es noch von keinem besetzt ist
+                        ter.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                        System.out.println("DEBUG PHASE 1: IN IF terName: " + ter.getTerritoryName() + " terCX: " + ter.getTerritoryCapital().getX() + ", terCY: " + ter.getTerritoryCapital().getY() + " ");
+
+                        //}
+                    }
+                    System.out.println("DEBUG PHASE 1: NACH IF terName: " + ter.getTerritoryName() + " terCX: " + ter.getTerritoryCapital().getX() + ", terCY: " + ter.getTerritoryCapital().getY() + " ");
+
+                    //landscapesDraw = ter.getLandscapes();
+
+
+                }
+
+
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                System.out.println("DEBUG Game-mouseClicked: unknown phase.");
+                break;
+        }
+
+        if (playerOnTurn + 1 >= players.length){
+            playerOnTurn = 0;
+        }else{
+            playerOnTurn++;
+        }
+
+        if (checkGameOver()){ // has one user owned all Territories?
+            gameover = true;
+        }
+
+
+
+    }
+
+    public boolean checkGameOver(){
+        for (int i = 0; i < players.length; ++i) {
+            if (players[playerOnTurn].getNumberOwnedTerritories() == continentsDraw.size()) {
+                systemmessage = "Player " + players[playerOnTurn].getPlayername() + " has won. :D";
+                return true;
+            }
+        }
+        return false;
     }
 
     // folgende werden nicht benötigt
@@ -178,7 +245,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
-
+        this.repaint();
     }
 
     @Override
