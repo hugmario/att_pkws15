@@ -15,6 +15,8 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
         // Mapfile einlesen und Territorien generieren
         map = new WorldLoader(worldfile);
 
+        // Zeichnen der Mapfile
+
         // Spieler erstellen
         players[0] = new Player("Mario", Color.green);
         players[1] = new Player("Daniel", Color.blue);
@@ -102,6 +104,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
     }
 
+    // folgende werden nicht benötigt
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
 
