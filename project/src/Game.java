@@ -327,8 +327,8 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
                                         // Würfeln, solange es auf jeder Seite mindestens 1 Armee gibt
                                         while (armysForFight >= 1 && enemyArmsToFight >= 1) {
-                                            rollTheDiceOwn = r.nextInt() * 6;
-                                            rollTheDiceEnemy = r.nextInt() * 6;
+                                            rollTheDiceOwn = r.nextInt((6-1) +1)+1;
+                                            rollTheDiceEnemy = r.nextInt((6-1) +1)+1;
                                             System.out.println("DEBUG Phase 2e: You rolled: " + rollTheDiceOwn + " and Enemy rolled: " + rollTheDiceEnemy);
                                             if (rollTheDiceOwn > rollTheDiceEnemy) {
                                                 enemyArmsToFight -= 1;
@@ -393,21 +393,34 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                 if (mouseClickedPoint.getX() >= ter.getTerritoryCapital().getX() - capitalClickOffset && mouseClickedPoint.getX() <= ter.getTerritoryCapital().getX() + capitalClickOffset &&
                                         mouseClickedPoint.getY() >= ter.getTerritoryCapital().getY() - capitalClickOffset && mouseClickedPoint.getY() <= ter.getTerritoryCapital().getY() + capitalClickOffset) {
                                     if (ter.getTerritoryOwner().equals(players[playerOnTurn].getPlayername())) { // nur sein eigenes Territorium
-                                        if (!startTerritoryChosen && !targetTerritoryChosen) { // erstmalig ein Startterritorium wählen
+                                        if (SwingUtilities.isLeftMouseButton(mouseEvent) && !startTerritoryChosen && !targetTerritoryChosen) { // erstmalig ein Startterritorium wählen
                                             startTerritory = ter;
                                             startTerritoryChosen = true;
-                                            systemmessage = "Choose target teritorry to move armys to. (or middle-click to end this round.)";
+                                            systemmessage = "Choose target teritorry to move armys to with right-click (or middle-click to end this round.)";
                                             moveArmysToStartTerritory = false;
                                             moveArmysToTargetTerritory = true;
-                                        }else if (startTerritoryChosen && !targetTerritoryChosen){ // erstmalig ein Zielterritorium wählen
+                                        }else if (SwingUtilities.isRightMouseButton(mouseEvent) && startTerritoryChosen && !targetTerritoryChosen){ // erstmalig ein Zielterritorium wählen
                                             targetTerritory = ter;
                                             targetTerritoryChosen = true;
                                             systemmessage = "Right-click to move 1 army to TargetTerritory. (or middle-click to end this round.)";
                                         }
 
                                         if(SwingUtilities.isLeftMouseButton(mouseEvent)){ //Links-Klick
-                                            // Entspricht geklicktem Territorium dem target Territory?
-                                            
+                                            if(mouseClickedPoint.getX() >= targetTerritory.getTerritoryCapital().getX() - capitalClickOffset && mouseClickedPoint.getX() <= targetTerritory.getTerritoryCapital().getX() + capitalClickOffset &&
+                                                    mouseClickedPoint.getY() >= targetTerritory.getTerritoryCapital().getY() - capitalClickOffset && mouseClickedPoint.getY() <= targetTerritory.getTerritoryCapital().getY() + capitalClickOffset){
+                                                // das gelickte Territorium entspricht dem Targetterritory, drehs um
+                                                tempTerritory = targetTerritory;
+                                                startTerritory = targetTerritory;
+                                                targetTerritory = startTerritory;
+                                            }else if(mouseClickedPoint.getX() >= startTerritory.getTerritoryCapital().getX() - capitalClickOffset && mouseClickedPoint.getX() <= startTerritory.getTerritoryCapital().getX() + capitalClickOffset &&
+                                                    mouseClickedPoint.getY() >= startTerritory.getTerritoryCapital().getY() - capitalClickOffset && mouseClickedPoint.getY() <= startTerritory.getTerritoryCapital().getY() + capitalClickOffset){
+                                                // das geklickte Territorium entspricht dem ursprünglichen Startterritory
+                                                tempTerritory = targetTerritory;
+                                                startTerritory = targetTerritory;
+                                                targetTerritory = startTerritory;
+                                            }else{
+                                                systemmessage = "incorrect territory left-click";
+                                            }
                                         }else if (SwingUtilities.isRightMouseButton(mouseEvent)){ //Rechts-Klick
                                             if (moveArmysToTargetTerritory){ // Start nach Ziel
                                                 if (startTerritory.getTerritoryArmy() >= 2) {

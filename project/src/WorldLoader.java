@@ -89,11 +89,14 @@ public class WorldLoader extends JPanel {
                         // BUG, world.map liest das falsch ein
                         splitline = line.split(":"); // erster Split (Bsp: continent America 3 UND Western America - Eastern America - Southern America)
                         splitline[0] = splitline[0].substring(9); //continent wegschneiden
-                        subline = splitline[1]; // Zwischenspeichern des restlichen Strings (also alle Territoriennamen des Continents)
-                        splitline = splitline[0].split(" "); // America UND 3
-                        affectedContinent = splitline[1];
+                        subline = splitline[0]; // Zwischenspeichern des restlichen Strings (also alle Territoriennamen des Continents)
+
+                        splitline = splitline[0].split(" "); //für bonusArmy Suche / das America UND 3
+                        //affectedContinent = splitline[1];
+
+                        affectedContinent = getAffectedRegion(subline);
                         affectedContinent = affectedContinent.trim();
-                        bonusarmys = Integer.parseInt(splitline[2]);
+                        bonusarmys = Integer.parseInt(splitline[splitline.length-1]); // den letzten Index, da steht fix die Ziffer drinn
 
                         // Continent immer erstellen (den gibts ja nur einmal)
                         c = new Continent(affectedContinent, bonusarmys);
