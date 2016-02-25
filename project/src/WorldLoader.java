@@ -98,13 +98,13 @@ public class WorldLoader extends JPanel {
                         affectedContinent = affectedContinent.trim();
                         bonusarmys = Integer.parseInt(splitline[splitline.length-1]); // den letzten Index, da steht fix die Ziffer drinn
 
-                        for(int i = 2; ; i++){
+                        /*for(int i = 2; ; i++){
                             try {
                                 bonusarmys = Integer.parseInt(splitline[i]);
                                 break;
                             }catch(NumberFormatException e){
                             }
-                        }
+                        }*/
 
 
                         // Continent immer erstellen (den gibts ja nur einmal)
@@ -115,7 +115,7 @@ public class WorldLoader extends JPanel {
                         for (int i = 0; i < splitline.length; ++i){
                             splitline[i] = splitline[i].trim(); //etwaige Leerzeichen (davor/danach) entfernen
                             t = territoryHashMap.get(splitline[i]);
-                            c.addTerritoryToContinent(t);
+                            c.addTerritoryToContinent(splitline[i], t);
                             continentHashMap.put(affectedContinent, c);
                         }
 

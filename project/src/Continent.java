@@ -25,8 +25,8 @@ public class Continent extends Territory{
         continentname = "UNKNOWN";
     }
 
-    public void addTerritoryToContinent(Territory t){
-        territoryHashMap.put(t.getTerritoryName(), t);
+    public void addTerritoryToContinent(String name, Territory t){
+        territoryHashMap.put(name, t);
     }
 
     public HashMap<String, Territory> getTerritories(){
