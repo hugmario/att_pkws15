@@ -201,7 +201,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                     }
 
                     // War es das letzte Territorium?
-
+                    System.out.println("DEBUG Game: territoriesInitCounter: " + territoriesInitCounter);
                     if (territoriesInitCounter >= territoriesDraw.size()) {
                         phase = 2;
                         playerOnTurn = 0; // Spieler muss ja Phase 2 beginnen
