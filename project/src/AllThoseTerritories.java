@@ -6,7 +6,7 @@ public class AllThoseTerritories {
             public void run() {
                 if (args.length == 0) {
                     //System.out.println("usage: AllThoseTerritories Worldfile.map");
-                    PrepareGame g = new PrepareGame("maps/three-continents.map");
+                    PrepareGame g = new PrepareGame("maps/world.map");
                     g.setVisible(true);
                 } else {
                     PrepareGame g = new PrepareGame(args[0]);
