@@ -21,6 +21,14 @@ public class Player {
         return playercolor;
     }
 
+    public void addOneToOwnedTerritories(){
+        numberOwnedTerritories++;
+    }
+
+    public void removeOneToOwnedTerritories(){
+        numberOwnedTerritories--;
+    }
+
     public Integer getNumberOwnedTerritories(){return numberOwnedTerritories; }
 
     public boolean hasReinforcement() {

@@ -86,6 +86,7 @@ public class WorldLoader extends JPanel {
                         }
 
                     }else if (line.startsWith("continent")){ // ein Kontinent mit Bonus und zugehöriger Territorien
+                        // BUG, world.map liest das falsch ein
                         splitline = line.split(":"); // erster Split (Bsp: continent America 3 UND Western America - Eastern America - Southern America)
                         splitline[0] = splitline[0].substring(9); //continent wegschneiden
                         subline = splitline[1]; // Zwischenspeichern des restlichen Strings (also alle Territoriennamen des Continents)

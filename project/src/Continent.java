@@ -29,7 +29,14 @@ public class Continent extends Territory{
         territoryHashMap.put(t.getTerritoryName(), t);
     }
 
+    public HashMap<String, Territory> getTerritories(){
+        return territoryHashMap;
+    }
+
     public void setContinentArmyBonus(int bonus){
         armybonus = bonus;
+    }
+    public Integer getContinentArmyBonus(){
+        return armybonus;
     }
 }

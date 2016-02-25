@@ -15,6 +15,19 @@ public class Territory extends Landscape{
     private Color fillcolor; // Player's Color
     private int armycount;
 
+    public Territory (Territory t){
+        territoryname = t.territoryname;
+        capital = t.capital;
+        counterLandscape = t.counterLandscape;
+        territoryNeighbours = t.territoryNeighbours;
+        territoryLandscapes = t.territoryLandscapes;
+        ownedby = t.ownedby;
+        fillcolor = t.fillcolor;
+        armycount = t.armycount;
+
+
+    }
+
     public Territory (String name){
         territoryname = name;
         ownedby = "NONE";
@@ -52,6 +65,18 @@ public class Territory extends Landscape{
 
     public Integer getTerritoryArmy(){
         return armycount;
+    }
+
+    public void setTerritoryArmyInit(){
+        armycount = 1;
+    }
+
+    public void setTerritoryArmy(int army){
+        armycount = army;
+    }
+
+    public void changeTerritoryArmy(int armys){
+        armycount += armys;
     }
 
     public void setNewColorToLandscapes(){
