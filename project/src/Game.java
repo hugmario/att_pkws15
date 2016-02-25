@@ -328,13 +328,11 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
                                         // Würfeln, solange es auf jeder Seite mindestens 1 Armee gibt
                                         while (armysForFight >= 1 && enemyArmsToFight >= 1) {
-<<<<<<< HEAD
                                             rollTheDiceOwn = r.nextInt((6-1) +1)+1;
-                                            rollTheDiceEnemy = r.nextInt((6-1) +1)+1;
-=======
-                                            rollTheDiceOwn = r.nextInt(7);
-                                            rollTheDiceEnemy = r.nextInt(7);
->>>>>>> 1a5905c05b2fc8000b80448a7e8de65db408e80f
+                                            rollTheDiceEnemy = r.nextInt((6-1) +1)+1; // würd ich so lassen, da 0 nie gewürfelt werden soll (min: 1, max: 6)
+
+                                            /*rollTheDiceOwn = r.nextInt(7);
+                                            rollTheDiceEnemy = r.nextInt(7);*/
                                             System.out.println("DEBUG Phase 2e: You rolled: " + rollTheDiceOwn + " and Enemy rolled: " + rollTheDiceEnemy);
                                             if (rollTheDiceOwn > rollTheDiceEnemy) {
                                                 enemyArmsToFight -= 1;

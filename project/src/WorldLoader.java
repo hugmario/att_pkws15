@@ -96,9 +96,8 @@ public class WorldLoader extends JPanel {
 
                         affectedContinent = getAffectedRegion(subline);
                         affectedContinent = affectedContinent.trim();
-<<<<<<< HEAD
                         bonusarmys = Integer.parseInt(splitline[splitline.length-1]); // den letzten Index, da steht fix die Ziffer drinn
-=======
+
                         for(int i = 2; ; i++){
                             try {
                                 bonusarmys = Integer.parseInt(splitline[i]);
@@ -106,7 +105,7 @@ public class WorldLoader extends JPanel {
                             }catch(NumberFormatException e){
                             }
                         }
->>>>>>> 1a5905c05b2fc8000b80448a7e8de65db408e80f
+
 
                         // Continent immer erstellen (den gibts ja nur einmal)
                         c = new Continent(affectedContinent, bonusarmys);
