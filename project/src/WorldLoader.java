@@ -32,14 +32,14 @@ public class WorldLoader extends JPanel {
 
             while ((line = br.readLine()) != null) { // solangs noch Zeilen gibt
                 if (!line.equals("")) {
-                    if (line.startsWith("patch-of")){ // eine Landfläche, die zu einem Territorium zugewiesen wird
+                    if (line.startsWith("patch-of")){ // eine Landflï¿½che, die zu einem Territorium zugewiesen wird
 
                         subline = line.substring(8); // erst direkt nach dem patch-of und dem Leerzeichen beginnen
                         subline = subline.trim();
                         affectedTerritory = getAffectedRegion(subline); // betroffenes Territorium rausfinden
 
                         poly = new Polygon();
-                        poly = getCoordinates(subline); // Landscape, welches zum betroffenen Territorium hinzugefügt wird
+                        poly = getCoordinates(subline); // Landscape, welches zum betroffenen Territorium hinzugefï¿½gt wird
                         l = new Landscape(poly); // Polygon dem Landscape geben
 
                         if (territoryHashMap.containsKey(affectedTerritory)){
@@ -60,7 +60,7 @@ public class WorldLoader extends JPanel {
                         affectedTerritory = getAffectedRegion(subline); // betroffenes Territorium rausfinden
 
                         point = new Point();
-                        point = getCoordinatesCapital(subline); // Landscape, welches zum betroffenen Territorium hinzugefügt wird
+                        point = getCoordinatesCapital(subline); // Landscape, welches zum betroffenen Territorium hinzugefï¿½gt wird
 
                         // Territorium muss bereits existieren
                         t = territoryHashMap.get(affectedTerritory);
@@ -85,7 +85,7 @@ public class WorldLoader extends JPanel {
                             t2.addNeighbourToTerritory(t); // allerdings genauso umgekehrt
                         }
 
-                    }else if (line.startsWith("continent")){ // ein Kontinent mit Bonus und zugehöriger Territorien
+                    }else if (line.startsWith("continent")){ // ein Kontinent mit Bonus und zugehï¿½riger Territorien
                         // BUG, world.map liest das falsch ein
                         splitline = line.split(":"); // erster Split (Bsp: continent America 3 UND Western America - Eastern America - Southern America)
                         splitline[0] = splitline[0].substring(9); //continent wegschneiden
@@ -93,12 +93,18 @@ public class WorldLoader extends JPanel {
                         splitline = splitline[0].split(" "); // America UND 3
                         affectedContinent = splitline[1];
                         affectedContinent = affectedContinent.trim();
-                        bonusarmys = Integer.parseInt(splitline[2]);
+                        for(int i = 2; ; i++){
+                            try {
+                                bonusarmys = Integer.parseInt(splitline[i]);
+                                break;
+                            }catch(NumberFormatException e){
+                            }
+                        }
 
                         // Continent immer erstellen (den gibts ja nur einmal)
                         c = new Continent(affectedContinent, bonusarmys);
 
-                        // Ermitteln der zugehörigen Territorien
+                        // Ermitteln der zugehï¿½rigen Territorien
                         splitline = subline.split("-");
                         for (int i = 0; i < splitline.length; ++i){
                             splitline[i] = splitline[i].trim(); //etwaige Leerzeichen (davor/danach) entfernen
@@ -107,7 +113,7 @@ public class WorldLoader extends JPanel {
                             continentHashMap.put(affectedContinent, c);
                         }
 
-                    }else{ //ungültiger Wert, da sollte man nie hinkommen
+                    }else{ //ungï¿½ltiger Wert, da sollte man nie hinkommen
 
                     }
                 }else{
@@ -133,7 +139,7 @@ public class WorldLoader extends JPanel {
     }
 
     public String getAffectedRegion(String line) {
-        // Prüfe auf Wörter mit Leerzeichen (zuerst das patch-of usw. wegschneiden, dann klappts)
+        // Prï¿½fe auf Wï¿½rter mit Leerzeichen (zuerst das patch-of usw. wegschneiden, dann klappts)
         Matcher match = Pattern.compile("[a-zA-Z ]+[a-zA-Z]").matcher(line);
         while (match.find()) {
             return match.group();
