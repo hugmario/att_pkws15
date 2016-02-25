@@ -297,6 +297,8 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
                                             // Anzahl der Armeen ermitteln
                                             armysForFight = startTerritory.getTerritoryArmy()-1;
+                                            if (armysForFight > 3){armysForFight = 3;}
+
                                             systemmessage = "Now choose a territory you want to fight.";
                                             subphase2 = 3;
                                         }else{
@@ -317,6 +319,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                         mouseClickedPoint.getY() >= ter.getTerritoryCapital().getY() - capitalClickOffset && mouseClickedPoint.getY() <= ter.getTerritoryCapital().getY() + capitalClickOffset) {
                                     if (!ter.getTerritoryOwner().equals(players[playerOnTurn].getPlayername())) { // nur ein fremdes Territorium
                                         targetTerritory = ter;
+
                                         // Anzahl der feindlichen Armeen ermitteln
                                         enemyArmsToFight = targetTerritory.getTerritoryArmy();
                                         systemmessage = "FIGHT.";
@@ -331,8 +334,6 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                             rollTheDiceOwn = r.nextInt((6-1) +1)+1;
                                             rollTheDiceEnemy = r.nextInt((6-1) +1)+1; // würd ich so lassen, da 0 nie gewürfelt werden soll (min: 1, max: 6)
 
-                                            /*rollTheDiceOwn = r.nextInt(7);
-                                            rollTheDiceEnemy = r.nextInt(7);*/
                                             System.out.println("DEBUG Phase 2e: You rolled: " + rollTheDiceOwn + " and Enemy rolled: " + rollTheDiceEnemy);
                                             if (rollTheDiceOwn > rollTheDiceEnemy) {
                                                 enemyArmsToFight -= 1;
@@ -348,6 +349,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                             targetTerritory.setTerritoryOwner(players[playerOnTurn].getPlayername()); // Besitzer umschreiben
                                             targetTerritory.setTerritoryArmy(armysForFight); // �berlebte Armeen eintragen
                                             targetTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                                            startTerritory.changeTerritoryArmy(armysForFight*-1); // Armeen, die zum Angreifen verwendet wurden, abziehen
                                             System.out.println("You won.");
                                             systemmessage = "You won. Left-Click at target territory to move armys (1 per click) or right-click to end this phase.";
                                         }else if (enemyArmsToFight >= 1){
@@ -357,6 +359,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                             startTerritory.setTerritoryOwner(targetTerritory.getTerritoryOwner()); // Besitzer umschreiben
                                             startTerritory.setTerritoryArmy(enemyArmsToFight); // �berlebte Gegner Armeen eintragen
                                             startTerritory.setTerritoryColor(players[getPlayerIndex(targetTerritory.getTerritoryName())].getPlayerColor());
+                                            System.out.println("You lost.");
                                             systemmessage = "You lost. Right-click to end this phase.";
 
                                         }
@@ -450,6 +453,9 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                     break;
                 case 4:
                     // Variablenreset für den nächsten Spieler
+                    phase = 1;
+                    subphase2 = 0;
+                    setNextPlayer();
                     break;
                 default:
                     System.out.println("DEBUG Game-mouseClicked: unknown phase.");
