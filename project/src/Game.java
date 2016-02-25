@@ -194,13 +194,14 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                 ter.setTerritoryColor(players[playerOnTurn].getPlayerColor());
                                 ter.setTerritoryArmyInit();
                                 players[playerOnTurn].addOneToOwnedTerritories();
+                                territoriesInitCounter++;
                             }
                         }
                         //System.out.println("DEBUG PHASE 1: TERRSTAT terOwner: " + ter.getTerritoryOwner() + " terName: " + ter.getTerritoryName() + " terCX: " + ter.getTerritoryCapital().getX() + ", terCY: " + ter.getTerritoryCapital().getY() + " ");
                     }
 
                     // War es das letzte Territorium?
-                    territoriesInitCounter++;
+
                     if (territoriesInitCounter >= territoriesDraw.size()) {
                         phase = 2;
                         playerOnTurn = 0; // Spieler muss ja Phase 2 beginnen
@@ -327,8 +328,13 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
                                         // Würfeln, solange es auf jeder Seite mindestens 1 Armee gibt
                                         while (armysForFight >= 1 && enemyArmsToFight >= 1) {
+<<<<<<< HEAD
                                             rollTheDiceOwn = r.nextInt((6-1) +1)+1;
                                             rollTheDiceEnemy = r.nextInt((6-1) +1)+1;
+=======
+                                            rollTheDiceOwn = r.nextInt(7);
+                                            rollTheDiceEnemy = r.nextInt(7);
+>>>>>>> 1a5905c05b2fc8000b80448a7e8de65db408e80f
                                             System.out.println("DEBUG Phase 2e: You rolled: " + rollTheDiceOwn + " and Enemy rolled: " + rollTheDiceEnemy);
                                             if (rollTheDiceOwn > rollTheDiceEnemy) {
                                                 enemyArmsToFight -= 1;
@@ -479,7 +485,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
     }
 
     public Integer getPlayerIndex(String player) {
-        return -1;
+        return players[0].getPlayername().equals(player) ? 0 : 1;
     }
 
     // folgende werden nicht benötigt
