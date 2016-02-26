@@ -30,14 +30,4 @@ public class Landscape {
     public Polygon getPolygon() {
         return p;
     }
-
-    /*protected void paint(Graphics g){
-
-        super.paint(g);
-
-        g.setColor(Color.BLUE);
-        g.drawPolygon(poly);
-
-    }*/
-
 }

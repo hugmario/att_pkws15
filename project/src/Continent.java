@@ -7,11 +7,6 @@ public class Continent extends Territory {
     private int armybonus;
     private HashMap<String, Territory> territoryHashMap = new HashMap<String, Territory>();
 
-    private int continent_minX;
-    private int continent_minY;
-    private int continent_maxX;
-    private int continent_maxY;
-
     public Continent(String name, int bonus) {
         continentname = name;
         armybonus = bonus;
