@@ -14,7 +14,7 @@ public class WorldLoader extends JPanel {
     private HashMap<String, Territory> territoryHashMap = new HashMap<String, Territory>();
 
 
-    public WorldLoader (String worldfile){
+    public WorldLoader(String worldfile) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(worldfile));
             String line = "";
@@ -32,7 +32,7 @@ public class WorldLoader extends JPanel {
 
             while ((line = br.readLine()) != null) { // solangs noch Zeilen gibt
                 if (!line.equals("")) {
-                    if (line.startsWith("patch-of")){ // eine Landfläche, die zu einem Territorium zugewiesen wird
+                    if (line.startsWith("patch-of")) { // eine Landfläche, die zu einem Territorium zugewiesen wird
 
                         subline = line.substring(8); // erst direkt nach dem patch-of und dem Leerzeichen beginnen
                         subline = subline.trim();
@@ -42,19 +42,19 @@ public class WorldLoader extends JPanel {
                         poly = getCoordinates(subline); // Landscape, welches zum betroffenen Territorium hinzugef�gt wird
                         l = new Landscape(poly); // Polygon dem Landscape geben
 
-                        if (territoryHashMap.containsKey(affectedTerritory)){
+                        if (territoryHashMap.containsKey(affectedTerritory)) {
                             // Territorium existiert schon
                             t = territoryHashMap.get(affectedTerritory);
                             t.addLandscapeToTerritory(l);
                             //territoryHashMap.replace(affectedTerritory, t);
-                        }else{
+                        } else {
                             // Territorium existiert noch nicht
                             t = new Territory(affectedTerritory);
                             t.addLandscapeToTerritory(l);
                             territoryHashMap.put(affectedTerritory, t);
                         }
 
-                    }else if (line.startsWith("capital-of")){ // Hauptstadt des Territoriums
+                    } else if (line.startsWith("capital-of")) { // Hauptstadt des Territoriums
                         subline = line.substring(10); // erst direkt nach dem capital-of beginnen
                         subline = subline.trim();
                         affectedTerritory = getAffectedRegion(subline); // betroffenes Territorium rausfinden
@@ -66,7 +66,7 @@ public class WorldLoader extends JPanel {
                         t = territoryHashMap.get(affectedTerritory);
                         t.setTerritoryCapital(point);
 
-                    }else if (line.startsWith("neighbors-of")){ // alle Nachbarn des Territoriums
+                    } else if (line.startsWith("neighbors-of")) { // alle Nachbarn des Territoriums
                         splitline = line.split(":"); // erster Split (Bsp: neighbors-of Island A UND Island B - Island C)
                         splitline[0] = splitline[0].substring(12); //neighbors-of wegschneiden
                         subline = splitline[1]; // Zwischenspeichern des restlichen Strings (also alle Nachbarn von)
@@ -78,14 +78,14 @@ public class WorldLoader extends JPanel {
 
                         // Ermitteln der Nachbarn
                         splitline = subline.split("-");
-                        for (int i = 0; i < splitline.length; ++i){
+                        for (int i = 0; i < splitline.length; ++i) {
                             splitline[i] = splitline[i].trim(); //etwaige Leerzeichen (davor/danach) entfernen
                             t2 = territoryHashMap.get(splitline[i]);
                             t.addNeighbourToTerritory(t2); // Nachbar eintragen
                             t2.addNeighbourToTerritory(t); // allerdings genauso umgekehrt
                         }
 
-                    }else if (line.startsWith("continent")){ // ein Kontinent mit Bonus und zugeh�riger Territorien
+                    } else if (line.startsWith("continent")) { // ein Kontinent mit Bonus und zugeh�riger Territorien
                         // BUG, world.map liest das falsch ein
                         splitline = line.split(":"); // erster Split (Bsp: continent America 3 UND Western America - Eastern America - Southern America)
                         splitline[0] = splitline[0].substring(9); //continent wegschneiden
@@ -96,7 +96,7 @@ public class WorldLoader extends JPanel {
 
                         affectedContinent = getAffectedRegion(subline);
                         affectedContinent = affectedContinent.trim();
-                        bonusarmys = Integer.parseInt(splitline[splitline.length-1]); // den letzten Index, da steht fix die Ziffer drinn
+                        bonusarmys = Integer.parseInt(splitline[splitline.length - 1]); // den letzten Index, da steht fix die Ziffer drinn
 
 
                         // Continent immer erstellen (den gibts ja nur einmal)
@@ -104,16 +104,16 @@ public class WorldLoader extends JPanel {
 
                         // Ermitteln der zugeh�rigen Territorien
                         splitline = subline.split("-");
-                        for (int i = 0; i < splitline.length; ++i){
+                        for (int i = 0; i < splitline.length; ++i) {
                             splitline[i] = splitline[i].trim(); //etwaige Leerzeichen (davor/danach) entfernen
                             t = territoryHashMap.get(splitline[i]);
                             c.addTerritoryToContinent(splitline[i], t);
                         }
                         continentHashMap.put(affectedContinent, c);
-                    }else{ //ung�ltiger Wert, da sollte man nie hinkommen
+                    } else { //ung�ltiger Wert, da sollte man nie hinkommen
 
                     }
-                }else{
+                } else {
                     // leere Zeile
 
                 }
@@ -121,17 +121,17 @@ public class WorldLoader extends JPanel {
             System.out.println("DEBUG WorldLoader: " + continentHashMap.size() + " Continents with " + territoryHashMap.size() + " Territories total.");
 
 
-        }catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 
     }
 
-    public HashMap<String, Continent> getContinentHashMap(){
+    public HashMap<String, Continent> getContinentHashMap() {
         return continentHashMap;
     }
 
-    public HashMap<String, Territory> getTerritoryHashMap(){
+    public HashMap<String, Territory> getTerritoryHashMap() {
         return territoryHashMap;
     }
 
@@ -149,8 +149,8 @@ public class WorldLoader extends JPanel {
 
         Polygon p = new Polygon();
 
-        for(int i = 0; i < stringData.length; i++)  {
-            if(isNumber(stringData[i]) && isNumber(stringData[i+1])) {
+        for (int i = 0; i < stringData.length; i++) {
+            if (isNumber(stringData[i]) && isNumber(stringData[i + 1])) {
                 p.addPoint(Integer.parseInt(stringData[i]),
                         Integer.parseInt(stringData[i + 1]));
                 i++; //jump over next index
@@ -164,8 +164,8 @@ public class WorldLoader extends JPanel {
 
         Point p = new Point();
 
-        for(int i = 0; i < stringData.length; i++)  {
-            if(isNumber(stringData[i]) && isNumber(stringData[i+1])) {
+        for (int i = 0; i < stringData.length; i++) {
+            if (isNumber(stringData[i]) && isNumber(stringData[i + 1])) {
                 p.setLocation(Integer.parseInt(stringData[i]),
                         Integer.parseInt(stringData[i + 1]));
                 i++; //jump over next index

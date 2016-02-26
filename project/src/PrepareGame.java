@@ -1,11 +1,11 @@
 import javax.swing.*;
 
 public class PrepareGame extends JFrame {
-    public PrepareGame(String mapfile){
+    public PrepareGame(String mapfile) {
 
         // Eigenschaften des Fensters
         this.add(new Game(mapfile));
-        this.setSize(1250,650);
+        this.setSize(1250, 650);
         //this.setResizeable(false);
         this.setTitle("All those Territories");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

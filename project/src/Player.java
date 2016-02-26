@@ -21,15 +21,17 @@ public class Player {
         return playercolor;
     }
 
-    public void addOneToOwnedTerritories(){
+    public void addOneToOwnedTerritories() {
         numberOwnedTerritories++;
     }
 
-    public void removeOneToOwnedTerritories(){
+    public void removeOneToOwnedTerritories() {
         numberOwnedTerritories--;
     }
 
-    public Integer getNumberOwnedTerritories(){return numberOwnedTerritories; }
+    public Integer getNumberOwnedTerritories() {
+        return numberOwnedTerritories;
+    }
 
     public boolean hasReinforcement() {
         return reinforcement > 0;

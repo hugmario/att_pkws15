@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class Continent extends Territory{
+public class Continent extends Territory {
 
     private String continentname;
     private int armybonus;
@@ -12,31 +12,32 @@ public class Continent extends Territory{
     private int continent_maxX;
     private int continent_maxY;
 
-    public Continent(String name, int bonus){
+    public Continent(String name, int bonus) {
         continentname = name;
         armybonus = bonus;
     }
 
-    public Continent(String name){
+    public Continent(String name) {
         continentname = name;
     }
 
-    public Continent(){
+    public Continent() {
         continentname = "UNKNOWN";
     }
 
-    public void addTerritoryToContinent(String name, Territory t){
+    public void addTerritoryToContinent(String name, Territory t) {
         territoryHashMap.put(name, t);
     }
 
-    public HashMap<String, Territory> getTerritories(){
+    public HashMap<String, Territory> getTerritories() {
         return territoryHashMap;
     }
 
-    public void setContinentArmyBonus(int bonus){
+    public void setContinentArmyBonus(int bonus) {
         armybonus = bonus;
     }
-    public Integer getContinentArmyBonus(){
+
+    public Integer getContinentArmyBonus() {
         return armybonus;
     }
 }
