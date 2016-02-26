@@ -32,7 +32,7 @@ public class WorldLoader extends JPanel {
 
             while ((line = br.readLine()) != null) { // solangs noch Zeilen gibt
                 if (!line.equals("")) {
-                    if (line.startsWith("patch-of")){ // eine Landflï¿½che, die zu einem Territorium zugewiesen wird
+                    if (line.startsWith("patch-of")){ // eine LandflÃ¤che, die zu einem Territorium zugewiesen wird
 
                         subline = line.substring(8); // erst direkt nach dem patch-of und dem Leerzeichen beginnen
                         subline = subline.trim();
@@ -91,20 +91,12 @@ public class WorldLoader extends JPanel {
                         splitline[0] = splitline[0].substring(9); //continent wegschneiden
                         subline = splitline[1]; // Zwischenspeichern des restlichen Strings (also alle Territoriennamen des Continents)
 
-                        splitline = splitline[0].split(" "); //für bonusArmy Suche / das America UND 3
+                        splitline = splitline[0].split(" "); //fï¿½r bonusArmy Suche / das America UND 3
                         //affectedContinent = splitline[1];
 
                         affectedContinent = getAffectedRegion(subline);
                         affectedContinent = affectedContinent.trim();
                         bonusarmys = Integer.parseInt(splitline[splitline.length-1]); // den letzten Index, da steht fix die Ziffer drinn
-
-                        /*for(int i = 2; ; i++){
-                            try {
-                                bonusarmys = Integer.parseInt(splitline[i]);
-                                break;
-                            }catch(NumberFormatException e){
-                            }
-                        }*/
 
 
                         // Continent immer erstellen (den gibts ja nur einmal)
@@ -116,9 +108,8 @@ public class WorldLoader extends JPanel {
                             splitline[i] = splitline[i].trim(); //etwaige Leerzeichen (davor/danach) entfernen
                             t = territoryHashMap.get(splitline[i]);
                             c.addTerritoryToContinent(splitline[i], t);
-                            continentHashMap.put(affectedContinent, c);
                         }
-
+                        continentHashMap.put(affectedContinent, c);
                     }else{ //ungï¿½ltiger Wert, da sollte man nie hinkommen
 
                     }

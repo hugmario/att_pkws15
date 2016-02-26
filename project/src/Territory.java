@@ -89,7 +89,7 @@ public class Territory extends Landscape{
 
     public void addLandscapeToTerritory(Landscape ls)
     {
-        territoryLandscapes.put(counterLandscape, ls);
+        territoryLandscapes.put(counterLandscape++, ls);
     }
 
     public void addNeighbourToTerritory(Territory te)
