@@ -10,7 +10,6 @@ import java.util.Random;
 
 public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
-    private String worldfile = "";
     private String playerOnTurnMessage = "";
     private String systemmessage = "initializing";
     private Player[] players = new Player[2];
@@ -34,12 +33,6 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
     private int enemyArmsToFight; // wieviele Armeen sind zu Besiegen?
 
     private Random r;
-    private int rollTheDiceEnemy;
-
-    private boolean moveArmysToTargetTerritory = true; // wenn wahr, dann wird per Links-Klick das Startterritorium gewählt, und per Rechtsklick das Zielterritorium
-    private boolean moveArmysToStartTerritory = true; // wenn wahr, dann wird per Links-Klick das Targetterritorium gewählt, und per Rechtsklick das Startterritorium
-    private boolean startTerritoryChosen = false;
-    private boolean targetTerritoryChosen = false;
     private Territory tempTerritory;
 
     HashMap<String, Continent> continentsDraw = new HashMap<String, Continent>();
@@ -49,7 +42,6 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
 
 
     public Game(String worldfile){
-        this.worldfile = worldfile;
 
         // Mapfile einlesen und Territorien generieren
         map = new WorldLoader(worldfile);
@@ -77,16 +69,23 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // Zeichne Nachbarn
+        for (Map.Entry<String, Territory> entry : territoriesDraw.entrySet()) {
+            Territory ter = entry.getValue();
 
+            // Zeichne Landscapes eines Territoriums
+            for (Map.Entry<String, Territory> entryl : ter.getTerritoryNeighbours().entrySet()) {
+                g.setColor(Color.black);
+                g.drawLine(ter.getTerritoryCapital().x, ter.getTerritoryCapital().y, entryl.getValue().getTerritoryCapital().x, entryl.getValue().getTerritoryCapital().y);
+            }
+        }
 
         for (Map.Entry<String, Territory> entry : territoriesDraw.entrySet()) {
-            String key = entry.getKey();
             Territory ter = entry.getValue();
             landscapesDraw = ter.getLandscapes();
 
             // Zeichne Landscapes eines Territoriums
             for (Map.Entry<Integer, Landscape> entryl : landscapesDraw.entrySet()) {
-                Integer keyl = entryl.getKey();
                 Landscape landsc = entryl.getValue();
 
                 Polygon p = landsc.getPolygon();
@@ -204,6 +203,9 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                 ter.setTerritoryArmyInit();
                                 players[playerOnTurn].addOneToOwnedTerritories();
                                 territoriesInitCounter++;
+                                // Computer auch gleich wählen lassen
+                                runAgain = true;
+                                setNextPlayer();
                                 //System.out.println("DEBUG PHASE 1: TERRSTAT terOwner: " + ter.getTerritoryOwner() + " terName: " + ter.getTerritoryName() + " terCX: " + ter.getTerritoryCapital().getX() + ", terCY: " + ter.getTerritoryCapital().getY() + " ");
                             }
                         }
@@ -215,10 +217,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                             playerOnTurn = 0; // Spieler muss ja Phase 2 beginnen
                             systemmessage = "all territories owned, Phase 2 is next. (please click).";
                         } else {
-                            setNextPlayer();
                             systemmessage = "Occupie an territory (by clicking on a capital).";
-                            // Computer auch gleich wählen lassen
-                            runAgain = true;
                         }
 
                         break;
@@ -303,30 +302,32 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                 for (Map.Entry<String, Territory> entry : territoriesDraw.entrySet()) {
                                     String key = entry.getKey();
                                     Territory ter = entry.getValue();
-                                    if (checkTerritoryClick(ter, players[playerOnTurn].getPlayername()) && checkNeighbors(ter)) {
-                                        // nur sein eigenes Territorium
-                                        if (ter.getTerritoryArmy() >= 2) {
-                                            startTerritory = ter;
-                                            startTerritory.setTerritoryColor(Color.red);
+                                    if (checkTerritoryClick(ter, players[playerOnTurn].getPlayername())) {
+                                        if (checkNeighbors(ter)) {
+                                            // nur sein eigenes Territorium
+                                            if (ter.getTerritoryArmy() >= 2) {
+                                                startTerritory = ter;
+                                                startTerritory.setTerritoryColor(Color.red);
 
-                                            // Anzahl der Armeen ermitteln
-                                            armysForFight = startTerritory.getTerritoryArmy() - 1;
-                                            if (armysForFight > 3) {
-                                                armysForFight = 3;
-                                            }
-                                            startTerritory.changeTerritoryArmy(-armysForFight);
+                                                // Anzahl der Armeen ermitteln
+                                                armysForFight = startTerritory.getTerritoryArmy() - 1;
+                                                if (armysForFight > 3) {
+                                                    armysForFight = 3;
+                                                }
+                                                startTerritory.changeTerritoryArmy(-armysForFight);
 
-                                            if(playerOnTurn == 0) {
-                                                systemmessage = "Now choose a territory you want to fight.";
-                                            }else{
-                                                systemmessage = players[playerOnTurn].getPlayername() + "chooses a starting territory.";
+                                                if (playerOnTurn == 0) {
+                                                    systemmessage = "Now choose a territory you want to fight.";
+                                                } else {
+                                                    systemmessage = players[playerOnTurn].getPlayername() + " chooses a target territory.";
+                                                }
+                                                subphase2 = 3;
+                                            } else {
+                                                systemmessage = "Not enough armys at this territory to fight for.";
                                             }
-                                            subphase2 = 3;
                                         } else {
-                                            systemmessage = "Not enough armys at this territory to fight for.";
+                                            systemmessage = "Not a valid starting Territory.";
                                         }
-                                    } else {
-                                        systemmessage = "Not a valid starting Territory.";
                                     }
                                     //System.out.println("DEBUG PHASE 2c: TERstart terOwner: " + startTerritory.getTerritoryOwner() + " terName: " + startTerritory.getTerritoryName() + " ter");
                                 }
@@ -335,99 +336,126 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                                 // Wenn Computer an der Reihe, Click auf ein benachbartes fremdes Territorium simulieren
                                 simulateComputer(players[(playerOnTurn+1)%2].getPlayername(), "2.3");
                                 for (Map.Entry<String, Territory> entry : territoriesDraw.entrySet()) {
-                                    String key = entry.getKey();
                                     Territory ter = entry.getValue();
                                     if (checkTerritoryClick(ter, null)) {
                                         if (!ter.getTerritoryOwner().equals(players[playerOnTurn].getPlayername())) { // nur ein fremdes Territorium
-                                            targetTerritory = ter;
+                                            if(startTerritory.getTerritoryNeighbours().containsKey(ter.getTerritoryName())) {
+                                                targetTerritory = ter;
 
-                                            // Anzahl der feindlichen Armeen ermitteln
-                                            enemyArmsToFight = Math.min(targetTerritory.getTerritoryArmy(), 2);
-                                            targetTerritory.changeTerritoryArmy(-enemyArmsToFight);
-                                            systemmessage = "FIGHT.";
-                                            System.out.println("DEBUG Phase 2d: Start fight.");
+                                                // Anzahl der feindlichen Armeen ermitteln
+                                                enemyArmsToFight = Math.min(targetTerritory.getTerritoryArmy(), 2);
+                                                targetTerritory.changeTerritoryArmy(-enemyArmsToFight);
+                                                systemmessage = "FIGHT.";
+                                                System.out.println("DEBUG Phase 2d: Start fight.");
 
-                                            // ANGRIFF
-                                            // Würfeln
-                                            r = new Random();
+                                                // ANGRIFF
+                                                // Würfeln
+                                                r = new Random();
 
-                                            // Höchste und zweithöchste Würfelzahl aller beteiligten Armeen ausrechnen
-                                            int highestDiceOwn = 0;
-                                            int secHighestDiceOwn = 0;
-                                            int highestDiceEnemy = 0;
-                                            int secHighestDiceEnemy = 0;
-                                            for(int i = 0; i < armysForFight; i++) {
-                                                int dice = r.nextInt(6) + 1;
-                                                if (dice > highestDiceOwn) {
-                                                    secHighestDiceOwn = highestDiceOwn;
-                                                    highestDiceOwn = dice;
-                                                } else if (dice > secHighestDiceOwn) {
-                                                    secHighestDiceOwn = dice;
+                                                // Höchste und zweithöchste Würfelzahl aller beteiligten Armeen ausrechnen
+                                                int highestDiceOwn = 0;
+                                                int secHighestDiceOwn = 0;
+                                                int highestDiceEnemy = 0;
+                                                int secHighestDiceEnemy = 0;
+                                                for (int i = 0; i < armysForFight; i++) {
+                                                    int dice = r.nextInt(6) + 1;
+                                                    if (dice > highestDiceOwn) {
+                                                        secHighestDiceOwn = highestDiceOwn;
+                                                        highestDiceOwn = dice;
+                                                    } else if (dice > secHighestDiceOwn) {
+                                                        secHighestDiceOwn = dice;
+                                                    }
                                                 }
-                                            }
-                                            for(int i = 0; i < enemyArmsToFight; i++) {
-                                                int dice = r.nextInt(6) + 1;
-                                                if (dice > highestDiceEnemy) {
-                                                    secHighestDiceEnemy = highestDiceEnemy;
-                                                    highestDiceEnemy = dice;
-                                                } else if (dice > secHighestDiceEnemy) {
-                                                    secHighestDiceEnemy = dice;
+                                                for (int i = 0; i < enemyArmsToFight; i++) {
+                                                    int dice = r.nextInt(6) + 1;
+                                                    if (dice > highestDiceEnemy) {
+                                                        secHighestDiceEnemy = highestDiceEnemy;
+                                                        highestDiceEnemy = dice;
+                                                    } else if (dice > secHighestDiceEnemy) {
+                                                        secHighestDiceEnemy = dice;
+                                                    }
                                                 }
-                                            }
 
-                                            int backup = enemyArmsToFight;
-                                            if(highestDiceOwn > highestDiceEnemy){
-                                                enemyArmsToFight--;
-                                            }else{
-                                                armysForFight--;
-                                            }
-                                            // Wenn zweite Armee verteidigt auch zweithöchsten Wert anschauen
-                                            if(backup == 2){
-                                                if(secHighestDiceOwn > secHighestDiceEnemy){
+                                                int backup = enemyArmsToFight;
+                                                if (highestDiceOwn > highestDiceEnemy) {
                                                     enemyArmsToFight--;
-                                                }else{
+                                                } else {
                                                     armysForFight--;
                                                 }
-                                            }
+                                                // Wenn zweite Armee verteidigt auch zweithöchsten Wert anschauen
+                                                if (backup == 2) {
+                                                    if (secHighestDiceOwn > secHighestDiceEnemy) {
+                                                        enemyArmsToFight--;
+                                                    } else {
+                                                        armysForFight--;
+                                                    }
+                                                }
 
-                                            if (enemyArmsToFight >= 1 || targetTerritory.getTerritoryArmy() >= 1) {
-                                                // Verteidiger hat gewonnen
-                                                startTerritory.changeTerritoryArmy(armysForFight); // Überlebte Angreifer eintragen
                                                 targetTerritory.changeTerritoryArmy(enemyArmsToFight); // Überlebte Verteidiger eintragen
-                                                System.out.println(players[playerOnTurn].getPlayername() + " lost.");
-                                                systemmessage = players[playerOnTurn].getPlayername() + " lost. Click to end this phase.";
-
+                                                if (targetTerritory.getTerritoryArmy() >= 1) {
+                                                    // Verteidiger hat gewonnen
+                                                    startTerritory.changeTerritoryArmy(armysForFight); // Überlebte Angreifer eintragen
+                                                    System.out.println(players[playerOnTurn].getPlayername() + " lost.");
+                                                    systemmessage = players[playerOnTurn].getPlayername() + " lost. Click to end this phase.";
+                                                    startTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                                                } else {
+                                                    // Spieler hat gewonnen
+                                                    players[getPlayerIndex(targetTerritory.getTerritoryName())].removeOneToOwnedTerritories();
+                                                    players[playerOnTurn].addOneToOwnedTerritories(); // erobertes Territorium hinzuz�hlen
+                                                    targetTerritory.setTerritoryOwner(players[playerOnTurn].getPlayername()); // Besitzer umschreiben
+                                                    targetTerritory.setTerritoryArmy(armysForFight); // �berlebte Armeen eintragen
+                                                    targetTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                                                    System.out.println(players[playerOnTurn].getPlayername() + " won.");
+                                                    systemmessage = players[playerOnTurn].getPlayername() + " won. Left-Click at target territory to move armys (1 per click) or right-click to end this phase.";
+                                                    startTerritory.setTerritoryColor(Color.red);
+                                                    targetTerritory.setTerritoryColor(Color.yellow);
+                                                }
+                                                subphase2 = 4;
                                             } else {
-                                                // Spieler hat gewonnen
-                                                players[getPlayerIndex(targetTerritory.getTerritoryName())].removeOneToOwnedTerritories();
-                                                players[playerOnTurn].addOneToOwnedTerritories(); // erobertes Territorium hinzuz�hlen
-                                                targetTerritory.setTerritoryOwner(players[playerOnTurn].getPlayername()); // Besitzer umschreiben
-                                                targetTerritory.setTerritoryArmy(armysForFight); // �berlebte Armeen eintragen
-                                                targetTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
-                                                System.out.println(players[playerOnTurn].getPlayername() + " won.");
-                                                systemmessage = players[playerOnTurn].getPlayername() + " won. Left-Click at target territory to move armys (1 per click) or right-click to end this phase.";
+                                                systemmessage = "Not a valid target Territory.";
                                             }
-                                            startTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
-                                            subphase2 = 4;
                                         } else {
                                             systemmessage = "That's not a foreign territory.";
                                         }
-                                    } else {
-                                        systemmessage = "Not a valid target Territory.";
                                     }
                                     //System.out.println("DEBUG PHASE 2d: TERtarget terOwner: " + targetTerritory.getTerritoryOwner() + " terName: " + targetTerritory.getTerritoryName() + " ter");
                                 }
                                 break;
                             case 4: // Armeen nachziehen
-                                if (SwingUtilities.isLeftMouseButton(mouseEvent)) { // Links klick erlaubt 1 Armee verschieben (von Start auf Ziel Territorium), wenn genug vorhanden sind
-                                    if (enemyArmsToFight < 1 && targetTerritory.getTerritoryArmy() < 1 && startTerritory.getTerritoryArmy() > 1) { // hat der Spieler gewonnen
+                                // Wenn Computer an der Reihe, zufällige Anzahl nachziehen
+                                if(playerOnTurn == 1) {
+                                    int n = 0;
+                                    if (targetTerritory.getTerritoryOwner().equals(players[playerOnTurn].getPlayername()) && startTerritory.getTerritoryArmy() > 1) { // hat der Computer gewonnen
+                                        r = new Random();
+                                        n = r.nextInt(startTerritory.getTerritoryArmy());
+                                        startTerritory.changeTerritoryArmy(-n);
+                                        targetTerritory.changeTerritoryArmy(n);
+                                    }
+                                    phase = 3;
+                                    startTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                                    targetTerritory.setTerritoryColor(players[getPlayerIndex(targetTerritory.getTerritoryName())].getPlayerColor());
+                                    startTerritory = null;
+                                    targetTerritory = null;
+                                    systemmessage = "Computer moved " + n + " armys after attack.";
+                                } else if (SwingUtilities.isLeftMouseButton(mouseEvent)) { // Links klick erlaubt 1 Armee verschieben (von Start auf Ziel Territorium), wenn genug vorhanden sind
+                                    if (targetTerritory.getTerritoryOwner().equals(players[playerOnTurn].getPlayername()) && startTerritory.getTerritoryArmy() > 1) { // hat der Spieler gewonnen
                                         startTerritory.changeTerritoryArmy(-1);
                                         targetTerritory.changeTerritoryArmy(1);
                                     } else { // hat der Spieler verloren, dann gleich weiter
                                         phase = 3;
+                                        startTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                                        targetTerritory.setTerritoryColor(players[getPlayerIndex(targetTerritory.getTerritoryName())].getPlayerColor());
+                                        startTerritory = null;
+                                        targetTerritory = null;
+                                        systemmessage = "Choose start territory to move armys from with left-click (or middle-click to end this round.)";
                                     }
                                 } else if (SwingUtilities.isRightMouseButton(mouseEvent)) { // fertig mit dem verschieben?
                                     phase = 3;
+                                    startTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                                    targetTerritory.setTerritoryColor(players[getPlayerIndex(targetTerritory.getTerritoryName())].getPlayerColor());
+                                    startTerritory = null;
+                                    targetTerritory = null;
+                                    systemmessage = "Choose start territory to move armys from with left-click (or middle-click to end this round.)";
                                 } else { // ungültige Maustaste?
                                     systemmessage = "Left-click at target territory or right-click to end this phase.";
                                 }
@@ -438,54 +466,59 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                         if (SwingUtilities.isMiddleMouseButton(mouseEvent)) { // Mittlerer Maustastenklick, um zu beenden
                             phase = 4;
                         } else {
+                            boolean fakeLeft = false;
+                            boolean fakeRight = false;
+                            if(playerOnTurn == 1){
+                                // Wenn Computer an der Reihe, Click auf ein eigenes Territorium simulieren
+                                if(startTerritory == null){
+                                    simulateComputer(players[playerOnTurn].getPlayername(), "3");
+                                    fakeLeft = true;
+                                } else if(targetTerritory == null){
+                                    simulateComputer(players[playerOnTurn].getPlayername(), "2.3");
+                                    fakeRight = true;
+                                } else if(startTerritory.getTerritoryArmy() > 1) {
+                                    r = new Random();
+                                    int n = r.nextInt(startTerritory.getTerritoryArmy());
+                                    startTerritory.changeTerritoryArmy(-n);
+                                    targetTerritory.changeTerritoryArmy(n);
+                                    systemmessage = "Computer moved " + n + " armys.";
+                                    phase = 4;
+                                    break;
+                                }
+                            }
                             // Territorium ermitteln
                             for (Map.Entry<String, Territory> entry : territoriesDraw.entrySet()) {
-                                String key = entry.getKey();
                                 Territory ter = entry.getValue();
                                 if (checkTerritoryClick(ter, players[playerOnTurn].getPlayername())) {
                                     // nur sein eigenes Territorium
-                                    if (SwingUtilities.isLeftMouseButton(mouseEvent) && !startTerritoryChosen && !targetTerritoryChosen) { // erstmalig ein Startterritorium wählen
-                                        startTerritory = ter;
-                                        startTerritoryChosen = true;
-                                        systemmessage = "Choose target teritorry to move armys to with right-click (or middle-click to end this round.)";
-                                        moveArmysToStartTerritory = false;
-                                        moveArmysToTargetTerritory = true;
-                                    } else if (SwingUtilities.isRightMouseButton(mouseEvent) && startTerritoryChosen && !targetTerritoryChosen) { // erstmalig ein Zielterritorium wählen
-                                        targetTerritory = ter;
-                                        targetTerritoryChosen = true;
-                                        systemmessage = "Right-click to move 1 army to TargetTerritory. (or middle-click to end this round.)";
-                                    }
-
-                                    if (SwingUtilities.isLeftMouseButton(mouseEvent)) { //Links-Klick
-                                        if (mouseClickedPoint.getX() >= targetTerritory.getTerritoryCapital().getX() - capitalClickOffset && mouseClickedPoint.getX() <= targetTerritory.getTerritoryCapital().getX() + capitalClickOffset &&
-                                                mouseClickedPoint.getY() >= targetTerritory.getTerritoryCapital().getY() - capitalClickOffset && mouseClickedPoint.getY() <= targetTerritory.getTerritoryCapital().getY() + capitalClickOffset) {
-                                            // das gelickte Territorium entspricht dem Targetterritory, drehs um
-                                            tempTerritory = targetTerritory;
-                                            startTerritory = targetTerritory;
-                                            targetTerritory = startTerritory;
-                                        } else if (mouseClickedPoint.getX() >= startTerritory.getTerritoryCapital().getX() - capitalClickOffset && mouseClickedPoint.getX() <= startTerritory.getTerritoryCapital().getX() + capitalClickOffset &&
-                                                mouseClickedPoint.getY() >= startTerritory.getTerritoryCapital().getY() - capitalClickOffset && mouseClickedPoint.getY() <= startTerritory.getTerritoryCapital().getY() + capitalClickOffset) {
-                                            // das geklickte Territorium entspricht dem ursprünglichen Startterritory
-                                            tempTerritory = targetTerritory;
-                                            startTerritory = targetTerritory;
-                                            targetTerritory = startTerritory;
+                                    if (fakeLeft || SwingUtilities.isLeftMouseButton(mouseEvent)) { // erstmalig ein Startterritorium wählen
+                                        if(startTerritory == null) {
+                                            if(ter.getTerritoryArmy() > 1 && checkNeighborsOwn(ter)) {
+                                                startTerritory = ter;
+                                                startTerritory.setTerritoryColor(Color.red);
+                                                systemmessage = "Choose target territory to move armys to with left-click (or middle-click to end this round.)";
+                                            }
+                                        } else if (targetTerritory == null) {
+                                            if(startTerritory.getTerritoryNeighbours().containsKey(ter.getTerritoryName())) {
+                                                targetTerritory = ter;
+                                                targetTerritory.setTerritoryColor(Color.yellow);
+                                                systemmessage = "Right-click to move 1 army to target, left-click to switch. (or middle-click to end this round.)";
+                                            }
                                         } else {
-                                            systemmessage = "incorrect territory left-click";
+                                            tempTerritory = targetTerritory;
+                                            targetTerritory = startTerritory;
+                                            startTerritory = tempTerritory;
+                                            startTerritory.setTerritoryColor(Color.red);
+                                            targetTerritory.setTerritoryColor(Color.yellow);
                                         }
-                                    } else if (SwingUtilities.isRightMouseButton(mouseEvent)) { //Rechts-Klick
-                                        if (moveArmysToTargetTerritory) { // Start nach Ziel
+                                    } else if (fakeRight || SwingUtilities.isRightMouseButton(mouseEvent)) { // erstmalig ein Zielterritorium wählen
+                                        if(targetTerritory != null) {
                                             if (startTerritory.getTerritoryArmy() >= 2) {
                                                 targetTerritory.changeTerritoryArmy(1);
                                                 startTerritory.changeTerritoryArmy(-1);
                                             } else {
                                                 systemmessage = "not enough armys to move";
-                                            }
-                                        } else { // Ziel nach Start
-                                            if (targetTerritory.getTerritoryArmy() >= 2) {
-                                                targetTerritory.changeTerritoryArmy(-1);
-                                                startTerritory.changeTerritoryArmy(1);
-                                            } else {
-                                                systemmessage = "not enough armys to move";
+                                                phase = 4;
                                             }
                                         }
                                     }
@@ -496,8 +529,16 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                         break;
                     case 4:
                         // Variablenreset für den nächsten Spieler
-                        phase = 1;
-                        subphase2 = 0;
+                        phase = 2;
+                        if(playerOnTurn == 0) {
+                            subphase2 = 2;
+                        }else {
+                            subphase2 = 0;
+                        }
+                        startTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                        targetTerritory.setTerritoryColor(players[playerOnTurn].getPlayerColor());
+                        startTerritory = null;
+                        targetTerritory = null;
                         setNextPlayer();
                         break;
                     default:
@@ -526,7 +567,9 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
                     if(!"2.2".equals(phase) || ter.getTerritoryArmy() >= 2 && checkNeighbors(ter)){
                         // Wenn ein benachbartes Ziel-Territorium ausgewählt werden soll
                         if(!"2.3".equals(phase) || startTerritory.getTerritoryNeighbours().containsKey(ter.getTerritoryName())){
-                            list.add(ter);
+                            if(!"3".equals(phase) || ter.getTerritoryArmy() > 1 && checkNeighborsOwn(ter)){
+                                list.add(ter);
+                            }
                         }
                     }
                 }
@@ -542,8 +585,17 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener{
     }
 
     private boolean checkNeighbors(Territory territory){
-        for(Territory ter : territoriesDraw.values()){
+        for(Territory ter : territory.getTerritoryNeighbours().values()){
             if(!ter.getTerritoryOwner().equals(territory.getTerritoryOwner())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkNeighborsOwn(Territory territory){
+        for(Territory ter : territory.getTerritoryNeighbours().values()){
+            if(ter.getTerritoryOwner().equals(territory.getTerritoryOwner())){
                 return true;
             }
         }
