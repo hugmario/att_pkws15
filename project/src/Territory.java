@@ -19,7 +19,7 @@ public class Territory extends Landscape{
         territoryname = t.territoryname;
         capital = t.capital;
         counterLandscape = t.counterLandscape;
-        territoryNeighbours = t.territoryNeighbours;
+        territoryNeighbours = t.getTerritoryNeighbours();
         territoryLandscapes = t.territoryLandscapes;
         ownedby = t.ownedby;
         fillcolor = t.fillcolor;
@@ -94,7 +94,7 @@ public class Territory extends Landscape{
 
     public void addNeighbourToTerritory(Territory te)
     {
-        territoryNeighbours.put(te.territoryname, te);
+        getTerritoryNeighbours().put(te.territoryname, te);
     }
 
     public void setTerritoryCapital(Point p)
@@ -110,4 +110,7 @@ public class Territory extends Landscape{
         return territoryLandscapes;
     }
 
+    public HashMap<String, Territory> getTerritoryNeighbours() {
+        return territoryNeighbours;
+    }
 }
